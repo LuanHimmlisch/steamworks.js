@@ -5,10 +5,34 @@ pub mod friends {
     use napi::bindgen_prelude::BigInt;
     use steamworks::SteamId;
 
+    #[napi]
+    pub enum PersonaState {
+        Offline = 0,
+        Online = 1,
+        Busy = 2,
+        Away = 3,
+        Snooze = 4,
+        LookingToTrade = 5,
+        LookingToPlay = 6,
+        Invisible = 7,
+    }
+
+    #[napi(object)]
+    pub struct FriendGameInfo {
+        pub game_id: BigInt,
+        pub game_ip: String,
+        pub game_port: u32,
+        pub query_port: u32,
+        pub lobby_id: BigInt,
+    }
+
     #[napi(object)]
     pub struct Friend {
         pub steam_id: BigInt,
         pub name: String,
+        pub nickname: Option<String>,
+        pub state: PersonaState,
+        pub game_played: Option<FriendGameInfo>,
     }
 
     #[napi]
@@ -27,17 +51,12 @@ pub mod friends {
     /// Get an array of friends matching the provided flags.
     ///
     /// @param flags - The flags to filter friends by.
-    /// @returns An array of friend objects containing steamId and name.
+    /// @returns An array of friend objects containing steamId, name, nickname, state and gamePlayed.
     ///
     /// @example
     /// ```js
     /// const friends = client.friends.getFriends(client.friends.FriendFlags.Immediate)
     /// console.log(friends)
-    /// // Output:
-    /// // [
-    /// //   { steamId: 76561197985341433n, name: 'XXX' },
-    /// //   { steamId: 76561198034399293n, name: 'YYY' },
-    /// // ]
     /// ```
     #[napi]
     pub fn get_friends(flags: i32) -> Vec<Friend> {
@@ -50,11 +69,28 @@ pub mod friends {
             .map(|f| Friend {
                 steam_id: BigInt::from(f.id().raw()),
                 name: f.name(),
+                nickname: f.nick_name(),
+                state: match f.state() {
+                    steamworks::FriendState::Offline => PersonaState::Offline,
+                    steamworks::FriendState::Online => PersonaState::Online,
+                    steamworks::FriendState::Busy => PersonaState::Busy,
+                    steamworks::FriendState::Away => PersonaState::Away,
+                    steamworks::FriendState::Snooze => PersonaState::Snooze,
+                    steamworks::FriendState::LookingToTrade => PersonaState::LookingToTrade,
+                    steamworks::FriendState::LookingToPlay => PersonaState::LookingToPlay,
+                },
+                game_played: f.game_played().map(|g| FriendGameInfo {
+                    game_id: BigInt::from(g.game.raw()),
+                    game_ip: g.game_address.to_string(),
+                    game_port: g.game_port as u32,
+                    query_port: g.query_port as u32,
+                    lobby_id: BigInt::from(g.lobby.raw()),
+                }),
             })
             .collect()
     }
 
-    /// Get the persona name of a friend.
+    /// Get the name of a friend.
     ///
     /// @param steam_id64 - The Steam ID of the friend.
     /// @returns The name of the friend.

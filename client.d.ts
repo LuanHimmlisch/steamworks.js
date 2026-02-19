@@ -79,9 +79,29 @@ export declare namespace cloud {
   }
 }
 export declare namespace friends {
+  export const enum PersonaState {
+    Offline = 0,
+    Online = 1,
+    Busy = 2,
+    Away = 3,
+    Snooze = 4,
+    LookingToTrade = 5,
+    LookingToPlay = 6,
+    Invisible = 7
+  }
+  export interface FriendGameInfo {
+    gameId: bigint
+    gameIp: string
+    gamePort: number
+    queryPort: number
+    lobbyId: bigint
+  }
   export interface Friend {
     steamId: bigint
     name: string
+    nickname?: string
+    state: PersonaState
+    gamePlayed?: FriendGameInfo
   }
   export const enum FriendFlags {
     None = 0,
@@ -98,33 +118,28 @@ export declare namespace friends {
    * Get an array of friends matching the provided flags.
    *
    * @param flags - The flags to filter friends by.
-   * @returns An array of friend objects containing steamId and name.
+   * @returns An array of friend objects containing steamId, name, nickname, state and gamePlayed.
    *
    * @example
    * ```js
    * const friends = client.friends.getFriends(client.friends.FriendFlags.Immediate)
    * console.log(friends)
-   * // Output:
-   * // [
-   * //   { steamId: 76561197985341433n, name: 'MaD_SpY' },
-   * //   { steamId: 76561198034399293n, name: 'BladeSmith' },
-   * // ]
    * ```
    */
   export function getFriends(flags: number): Array<Friend>
   /**
-   * Get the persona name of a friend.
+   * Get the name of a friend.
    *
    * @param steam_id64 - The Steam ID of the friend.
    * @returns The name of the friend.
    *
    * @example
    * ```js
-   * const name = client.friends.getFriendPersonaName(76561197985341433n)
-   * console.log(name) // 'MaD_SpY'
+   * const name = client.friends.getFriendName(76561197985341433n)
+   * console.log(name)
    * ```
    */
-  export function getFriendPersonaName(steamId64: bigint): string
+  export function getFriendName(steamId64: bigint): string
 }
 export declare namespace input {
   export const enum InputType {
