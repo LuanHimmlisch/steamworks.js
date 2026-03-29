@@ -5,7 +5,7 @@ pub mod matchmaking {
     use crate::api::localplayer::PlayerSteamId;
     use napi::bindgen_prelude::{BigInt, Error};
     use std::collections::HashMap;
-    use steamworks::LobbyId;
+    use steamworks::{LobbyId, SteamId};
     use tokio::sync::oneshot;
 
     #[napi]
@@ -93,6 +93,31 @@ pub mod matchmaking {
             client
                 .matchmaking()
                 .set_lobby_data(self.lobby_id, &key, &value)
+        }
+
+        #[napi]
+        pub fn get_member_data(&self, steam_id64: BigInt, key: String) -> Option<String> {
+            let client = crate::client::get_client();
+            client
+                .matchmaking()
+                .get_lobby_member_data(
+                    self.lobby_id, 
+                    SteamId::from_raw(steam_id64.get_u64().1),
+                    &key
+                )
+                .map(|s| s.to_string())
+        }
+
+        #[napi]
+        pub fn set_member_data(&self, key: String, value: String) {
+            let client = crate::client::get_client();
+            client
+                .matchmaking()
+                .set_lobby_member_data(
+                    self.lobby_id,
+                    &key, 
+                    &value
+                )
         }
 
         #[napi]
