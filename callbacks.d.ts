@@ -2,15 +2,15 @@ import client = require('./client')
 
 export const enum ChatMemberStateChange {
     /** This user has joined or is joining the lobby. */
-    Entered,
+    Entered = 'Entered',
     /** This user has left or is leaving the lobby. */
-    Left,
+    Left = 'Left',
     /** User disconnected without leaving the lobby first. */
-    Disconnected,
+    Disconnected = 'Disconnected',
     /** The user has been kicked. */
-    Kicked,
+    Kicked = 'Kicked',
     /** The user has been kicked and banned. */
-    Banned,
+    Banned = 'Banned',
 }
 
 export interface CallbackReturns {
