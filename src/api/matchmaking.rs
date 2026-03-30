@@ -101,9 +101,9 @@ pub mod matchmaking {
             client
                 .matchmaking()
                 .get_lobby_member_data(
-                    self.lobby_id, 
+                    self.lobby_id,
                     SteamId::from_raw(steam_id64.get_u64().1),
-                    &key
+                    &key,
                 )
                 .map(|s| s.to_string())
         }
@@ -113,11 +113,7 @@ pub mod matchmaking {
             let client = crate::client::get_client();
             client
                 .matchmaking()
-                .set_lobby_member_data(
-                    self.lobby_id,
-                    &key, 
-                    &value
-                )
+                .set_lobby_member_data(self.lobby_id, &key, &value)
         }
 
         #[napi]
