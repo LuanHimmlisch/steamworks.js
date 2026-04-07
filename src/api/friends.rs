@@ -108,4 +108,14 @@ pub mod friends {
             .get_friend(SteamId::from_raw(steam_id64.get_u64().1))
             .name()
     }
+
+    #[napi]
+    pub fn activate_invite_dialog(lobby_id: BigInt) {
+        let client = crate::client::get_client();
+        client
+            .friends()
+            .activate_invite_dialog(
+                steamworks::LobbyId::from_raw(lobby_id.get_u64().1)
+            );
+    }
 }

@@ -140,6 +140,7 @@ export declare namespace friends {
    * ```
    */
   export function getFriendName(steamId64: bigint): string
+  export function activateInviteDialog(lobbyId: bigint): void
 }
 export declare namespace input {
   export const enum InputType {
