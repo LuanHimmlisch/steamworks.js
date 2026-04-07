@@ -114,8 +114,6 @@ pub mod friends {
         let client = crate::client::get_client();
         client
             .friends()
-            .activate_invite_dialog(
-                steamworks::LobbyId::from_raw(lobby_id.get_u64().1)
-            );
+            .activate_invite_dialog(steamworks::LobbyId::from_raw(lobby_id.get_u64().1));
     }
 }
